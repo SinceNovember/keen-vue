@@ -1,0 +1,7 @@
+/build/
+/config/
+/dist/
+/test/unit/coverage/
+/node_modules/
+/src/public-path.js
+/public/js/
