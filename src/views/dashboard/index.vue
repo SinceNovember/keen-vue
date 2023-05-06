@@ -10,7 +10,7 @@
             欢 迎 登 陆
           </span>
           <span class="fs-5 text-white me-2 ">
-            Life is good, happy every day
+            Live your life and come here on the road.
           </span>
         </div>
         <div class="summary-header-right" />

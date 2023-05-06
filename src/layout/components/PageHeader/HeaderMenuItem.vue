@@ -7,11 +7,12 @@
   >
     <router-link
       ref="tag"
-      :key="route.path"
+      :key="realMenu(route).path"
       tag="span"
       class="menu-link"
-      :to="{ path: route.path, fullPath: route.fullPath }"
+      :to="{ path: realMenu(route).path, fullPath: realMenu(route).fullPath }"
     >
+
       <span
         v-if="route.parentId"
         class="menu-link-icon"
@@ -33,14 +34,14 @@
         </span>
       </span>
 
-      <span class="menu-title">{{ route.meta.title }}</span>
+      <span class="menu-title">{{ realMenu(route).meta.title }}</span>
       <span
         v-if="hasChild(route.children) && route.parentId"
         class="menu-arrow"
       />
     </router-link>
     <div
-      v-if="hasChild(route.children)"
+      v-if="route.id && hasChild(route.children)"
       class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown px-lg-2 py-lg-4 w-lg-200px"
       :class="menuSubCls(route)"
     >
@@ -78,6 +79,12 @@ export default {
     )
   },
   methods: {
+    realMenu(menu) {
+      if (menu.id) {
+        return menu
+      }
+      return menu.children[0]
+    },
     hasChild(children = []) {
       if (children.length > 0) {
         return true

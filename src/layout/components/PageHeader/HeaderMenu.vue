@@ -23,8 +23,6 @@ export default {
     return {
       menus: global.antRouter
     }
-  },
-  methods: {
   }
 }
 </script>
