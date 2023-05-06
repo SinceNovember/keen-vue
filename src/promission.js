@@ -8,7 +8,6 @@ var getRouter
 const _import = require('./router/_import_' + process.env.NODE_ENV)// 获取组件的方法
 const whiteList = ['/login'] // no redirect whitelist
 router.beforeEach(async(to, from, next) => {
-  console.log('routing')
   // 从Cookie中获取token
   const hasToken = getToken()
   // NProgress.start() //加载进度条
@@ -60,7 +59,6 @@ function saveObjArr(name, data) { // localStorage 存储数组对象的方法
 
 function filterAsyncRouter(asyncRouterMap) { // 遍历后台传来的路由字符串，转换为组件对象
   const accessedRouters = asyncRouterMap.filter(route => {
-    console.log('ss')
     if (route.component) {
       if (route.component === 'Layout' || (!route.parentId && route.children.length > 0)) { // Layout组件特殊处理
         route.component = Layout

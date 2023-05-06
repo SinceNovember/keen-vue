@@ -3,7 +3,6 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
-console.log(process.env)
 export const Instance = axios.create({
   baseURL: process.env.VUE_APP_DATAURL,
   timeout: 1000 * 60
@@ -17,8 +16,7 @@ Instance.use = function(fn) {
 }
 
 Instance.interceptors.request.use(config => {
-  config.headers['Hyper-Token'] = `Bearer ${getToken()}`
-  console.log(config)
+  config.headers['Keen-Token'] = `Bearer ${getToken()}`
   if (config.method === 'get' && config.data) {
     config.url += '?'
     const keys = Object.keys(config.data)

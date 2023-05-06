@@ -123,12 +123,12 @@ export const updateProfileImage = data => {
   })
 }
 
-export const uploadImg = (params, config) => {
+export const uploadImg = data => {
   return $instance({
     url: '/api/upload/img',
     method: 'post',
-    params,
-    config
+    data,
+    headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
 

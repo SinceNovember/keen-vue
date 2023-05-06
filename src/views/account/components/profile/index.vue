@@ -189,13 +189,11 @@ export default {
       const file = new window.File([data], this.fileName, { type: 'image/jpeg' })
       var formData = new FormData()
       formData.append('file', file)
-      const config = {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      }
-      uploadImg(formData, config).then(res => {
-        // this.userInfo.profileImage = res.data
+      uploadImg(formData).then(res => {
         updateProfileImage({
           profileImage: res.data
+        }).then(res => {
+          // this.userInfo.profileImage = res.data
         })
       })
     }
