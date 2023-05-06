@@ -1,5 +1,5 @@
 <template>
-  <div class="app-sidebar-menu flex-column-fluid">
+  <div class="app-sidebar-menu overflow-hidden flex-column-fluid">
     <div class="app-sidebar-wrapper hover-scroll-overlay-y my-5">
       <div class=" menu menu-column menu-rounded menu-sub-indention fw-semibold px-3">
         <sidebar-menu-item
