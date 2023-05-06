@@ -42,7 +42,7 @@ export const addOrUpdateUserNotificationMessage = data => {
 
 export const deleteNotificationMessage = data => {
   return $instance({
-    url: '/api/message/notification/user',
+    url: '/api/message/notification/delete',
     method: 'post',
     data
   })
