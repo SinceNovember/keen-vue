@@ -90,3 +90,7 @@ export function getTimeLine(lastMsg) {
   }
   return now
 }
+
+export function getFileSuffixBase64(suffix) {
+
+}

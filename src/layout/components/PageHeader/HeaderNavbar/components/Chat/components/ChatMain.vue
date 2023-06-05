@@ -410,7 +410,7 @@
 <script>
 import { fetchContactUsers, clearUnreadChatMessage, hiddenContactUser, showContactUser } from '@/api/message/chat'
 import { addOrUpdateUserNotificationMessage } from '@/api/message/notification'
-import { uploadImg } from '@/api/system/user'
+import { uploadImage } from '@/api/attachment/attachment'
 import { nowTimeStr, getTimeLine } from '@/utils/utils'
 import { getEmoji } from '@/utils/emoji'
 import Emoji from '@/components/Emoji'
@@ -640,10 +640,7 @@ export default {
       if (isImg && isLt2M) {
         const param = new FormData() // 创建form对象
         param.append('file', file, file.name) // file对象是 beforeUpload参数
-        const config = {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        }
-        uploadImg(param, config).then(res => {
+        uploadImage(param).then(res => {
           this.sendImage(res.data)
         })
       }

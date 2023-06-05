@@ -3,6 +3,7 @@
     <profile
       :user-info="userInfo"
       :is-current="isCurrent"
+      @updateProfileImage="updateProfileImage"
     />
     <navbar
       :active-tab="activeTab"
@@ -69,6 +70,9 @@ export default {
     },
     changeTab(tab) {
       this.activeTab = tab
+    },
+    updateProfileImage(val) {
+      this.userInfo.profileImage = val
     }
   }
 }

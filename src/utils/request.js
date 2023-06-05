@@ -30,16 +30,17 @@ Instance.interceptors.request.use(config => {
 }
 )
 
-Instance.interceptors.response.use(response => {
-  const res = response.data
-  if (res.code !== 200) {
+Instance.interceptors.response.use(res => {
+  // const res = response.data
+  console.log(res)
+  if (res.data.code && res.data.code !== 200) {
     Message({
-      message: res.msg || 'Error',
+      message: res.data.msg || 'Error',
       type: 'error',
       duration: 5 * 1000
     })
     // 当token过期或者不存在时，后台返回状态码401，此时页面跳转到登录页面
-    if (res.code === 401) {
+    if (res.data.code === 401) {
       // to re-login
       MessageBox.confirm('您的会话已过期，是否重新登陆？', '重新登陆', {
         confirmButtonText: '重新登陆',
@@ -51,9 +52,22 @@ Instance.interceptors.response.use(response => {
         })
       })
     }
-    return Promise.reject(new Error(res.msg || 'Error'))
+    return Promise.reject(new Error(res.data.msg || 'Error'))
   } else {
-    return res
+    // 是否是下载
+    if (res.headers['content-disposition']) {
+      const disposition = res.headers['content-disposition']
+      const fileName = disposition.substring(
+        disposition.indexOf('filename=') + 9,
+        disposition.length
+      )
+      return Promise.resolve({
+        fileName,
+        blob: res.data
+      })
+    } else {
+      return Promise.resolve(res.data)
+    }
   }
 }, error => {
   console.log('err' + error) // for debug

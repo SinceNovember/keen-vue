@@ -171,3 +171,21 @@
         padding: 14px 20px;
     }
 }
+
+.attachment-container {
+    .header-bg {
+        .el-card__body {
+            padding: 0px 20px;
+
+            .card-header {
+                border-bottom: #fff;
+                padding-bottom: 0px;
+            }
+
+            .card-body {
+                padding-top: 24px;
+            }
+        }
+        
+    }
+}

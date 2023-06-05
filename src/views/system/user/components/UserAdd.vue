@@ -160,7 +160,8 @@
   </el-form>
 </template>
 <script>
-import { addOrUpdateUser, uploadImg } from '@/api/system/user'
+import { addOrUpdateUser } from '@/api/system/user'
+import { uploadImage } from '@/api/attachment/attachment'
 import { getSexOption, getStatusOption } from '@/api/option'
 import { fetchDeptTreeModel } from '@/api/system/dept'
 import { fetchRoleOptionModel } from '@/api/system/role'
@@ -292,7 +293,7 @@ export default {
       const file = new window.File([data], this.fileName, { type: 'image/jpeg' })
       var formData = new FormData()
       formData.append('file', file)
-      uploadImg(formData).then(res => {
+      uploadImage(formData).then(res => {
         this.userInfo.avatar = res.data
       })
     }

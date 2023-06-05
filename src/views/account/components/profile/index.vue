@@ -140,7 +140,8 @@
   </el-card>
 </template>
 <script>
-import { updateProfileImage, uploadImg } from '@/api/system/user'
+import { updateProfileImage } from '@/api/system/user'
+import { uploadImage } from '@/api/attachment/attachment'
 import Cropper from '@/components/Cropper'
 
 export default {
@@ -189,11 +190,11 @@ export default {
       const file = new window.File([data], this.fileName, { type: 'image/jpeg' })
       var formData = new FormData()
       formData.append('file', file)
-      uploadImg(formData).then(res => {
+      uploadImage(formData).then(res => {
         updateProfileImage({
           profileImage: res.data
         }).then(res => {
-          // this.userInfo.profileImage = res.data
+          this.$emit('updateProfileImage', res.data)
         })
       })
     }

@@ -122,7 +122,8 @@
   </el-card>
 </template>
 <script>
-import { addOrUpdateUser, uploadImg } from '@/api/system/user'
+import { addOrUpdateUser } from '@/api/system/user'
+import { uploadImage } from '@/api/attachment/attachment'
 import { getSexOption } from '@/api/option'
 import Cropper from '@/components/Cropper'
 
@@ -207,9 +208,8 @@ export default {
       const file = new window.File([data], this.fileName, { type: 'image/jpeg' })
       var formData = new FormData()
       formData.append('file', file)
-      uploadImg(formData).then(res => {
+      uploadImage(formData).then(res => {
         this.profileInfo.avatar = res.data
-        console.log(this.profileInfo)
       })
     }
   }
