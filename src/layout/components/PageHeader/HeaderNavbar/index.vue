@@ -274,7 +274,6 @@ export default {
       this.$store.dispatch('app/toggleTheme')
     },
     refreshNotification() {
-      console.log('adsad')
       this.$refs.notificationRef.loadUserNotificationMessages()
     }
 

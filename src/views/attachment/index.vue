@@ -1,13 +1,29 @@
 <template>
   <div class="attachment-container">
     <div class="mb-10">
-      <attachment-summary />
+      <attachment-summary ref="summary" />
     </div>
     <el-card shadow="nerve">
       <div class="py-5 px-2">
-        <attachment-header @addFolder="addFolder" />
-        <attachment-navigation-bar />
-        <attachment-table ref="table" />
+        <attachment-header
+          ref="header"
+          :folder-id="folderId"
+          :is-selected="isSelected"
+          @addFolder="addFolder"
+          @search="refreshTable"
+          @refreshSummary="refreshSummary"
+          @deleteSelected="deleteSelected"
+        />
+        <attachment-navigation-bar
+          ref="navigationBar"
+          @changeFolder="changeFolder"
+        />
+        <attachment-table
+          ref="table"
+          :is-selected.sync="isSelected"
+          @navigateNext="navigateNext"
+          @refreshSummary="refreshSummary"
+        />
       </div>
     </el-card>
 
@@ -28,11 +44,32 @@ export default {
     AttachmentTable
   },
   data() {
-    return {}
+    return {
+      folderId: 0,
+      isSelected: false
+    }
   },
   methods: {
     addFolder() {
       this.$refs.table.addFolder()
+    },
+    navigateNext(row) {
+      this.$refs.navigationBar.addNavigationItem(row)
+      this.folderId = row.id
+    },
+    changeFolder(row) {
+      this.$refs.table.changeFolder(row)
+      this.folderId = row.id
+    },
+    refreshTable(params) {
+      this.$refs.table.refreshTable(params)
+    },
+    refreshSummary() {
+      console.log('zzz')
+      this.$refs.summary.loadAttachmentInfoSummary()
+    },
+    deleteSelected() {
+      this.$refs.table.deleteSelected()
     }
   }
 }

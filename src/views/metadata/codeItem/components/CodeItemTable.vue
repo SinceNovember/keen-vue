@@ -185,7 +185,6 @@ export default {
         this.$message('至少选中一条记录')
       }
     },
-
     handleDelete(ids) {
       deleteCodeItem({
         ids: ids

@@ -102,7 +102,6 @@ export default {
       this.$emit('search', this.params)
     },
     refreshTable() {
-      console.log('dd')
       this.$emit('search')
     },
     deleteSelected() {

@@ -286,7 +286,6 @@ export default {
       this.$refs.menuAssign.save()
     },
     openDetail(row) {
-      console.log(row)
       getMenu({
         id: row.id
       }).then(res => {
@@ -299,7 +298,6 @@ export default {
       this.assignDialog = true
     },
     openEdit(row) {
-      console.log(row)
       getMenu({
         id: row.id
       }).then(res => {

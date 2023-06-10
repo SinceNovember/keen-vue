@@ -9,7 +9,6 @@
         placeholder="请输入用户名称"
         @change="search"
       />
-      <a @click="downloadTest">下载</a>
 
       <a
         href="#"
@@ -74,7 +73,6 @@
 </template>
 <script>
 import UserAdd from './UserAdd'
-import { downloadAttachment } from '@/api/attachment/attachment'
 export default {
   name: 'UserHeader',
   components: {
@@ -115,11 +113,6 @@ export default {
     },
     cancel() {
       this.dialog = false
-    },
-    downloadTest() {
-      downloadAttachment(18).then(res => {
-        console.log(res)
-      })
     }
   }
 }

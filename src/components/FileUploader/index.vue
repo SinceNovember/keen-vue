@@ -41,7 +41,7 @@
             </div>
             <div class="d-flex flex-column">
               <span class="text-gray-700 fs-7">{{ item.name }} </span>
-              <span class="text-gray-400 fs-8">15 MB</span>
+              <span class="text-gray-400 fs-8">{{ item.size }}</span>
             </div>
           </div>
           <div
@@ -76,35 +76,20 @@
         />
       </div>
     </div>
-
-    <!-- <el-upload
-      class="upload-demo"
-      action=""
-      :http-request="handleUpload"
-      :before-upload="beforeUpload"
-      :on-preview="handlePreview"
-      :on-success="onSuccess"
-      :on-remove="handleRemove"
-      drags
-      :show-file-list="false"
-    > -->
-    <!-- <el-button
-      size="small"
-      type="primary"
-    >点击上传</el-button>
-    <div
-      slot="tip"
-      class="el-upload__tip"
-    >只能上传jpg/png文件，且不超过500kb</div>
-    </el-upload> -->
-    <!--end::Input group-->
   </div>
 </template>
 <script>
 import { uploadAttachment } from '@/api/attachment/attachment'
-import * as AttachmentConst from '@/const/attachmentConst'
+import { getThumbnail } from '@/const/attachmentConst'
+import { formatAttachmentSize } from '@/utils/utils'
 export default {
   name: 'FileUploader',
+  props: {
+    folderId: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
       uploadPercent: 0,
@@ -119,14 +104,12 @@ export default {
       console.log(file)
     },
     beforeUpload(file) {
+      console.log(file)
       const extension = file.name.split('.').pop()
-      var fileThumbnail = AttachmentConst.attachmentTypeImage[extension]
-      if (!fileThumbnail) {
-        fileThumbnail = AttachmentConst.attachmentTypeImage['unknown']
-      }
       this.fileList.push({
         name: file.name,
-        url: fileThumbnail,
+        url: getThumbnail(extension),
+        size: formatAttachmentSize(file.size),
         progress: 0,
         progressColor: '#409eff',
         hover: false,
@@ -139,12 +122,18 @@ export default {
       const currentFile = this.fileList.slice(-1)[0]
       var formData = new FormData()
       formData.append('file', file)
+      formData.append('folderId', this.folderId)
       uploadAttachment(formData, progressEvent => {
         currentFile.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
       }).then(res => {
         currentFile.status = true
         currentFile.finish = true
         currentFile.progressColor = '#5cb87a'
+        this.$emit('success')
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        })
       }).catch(err => {
         currentFile.status = false
         currentFile.finish = true

@@ -729,7 +729,6 @@ export default {
       }
     },
     replaceHtml(data) {
-      console.log(data)
       if (!data.content) {
         return
       }

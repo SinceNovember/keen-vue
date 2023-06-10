@@ -2,7 +2,7 @@
   <div class="progress-vertical">
     <div class="progress-vertical gap-2">
       <el-input
-        v-model="params.roleName"
+        v-model="params.name"
         style="width: 200px;"
         small
         prefix-icon="el-icon-search"
@@ -11,7 +11,11 @@
       />
     </div>
     <div class="d-flex">
-
+      <!-- <header-button-group
+            @refresh="refreshTable"
+            @add="openAdd"
+            @delete="deleteSelected"
+        /> -->
       <el-button
         type="primary"
         plain
@@ -24,12 +28,23 @@
       </el-button>
 
       <el-button
+        v-if="!isSelected"
         type="primary"
         size="small"
         @click="openUpload"
       >
         <div class="anchor">
           <i class="bi bi-cloud-arrow-up-fill me-2 fs-2" />上传文件
+        </div>
+      </el-button>
+      <el-button
+        v-else
+        type="danger"
+        size="small"
+        @click="deleteSelected"
+      >
+        <div class="anchor">
+          <i class="bi bi-cloud-arrow-up-fill me-2 fs-2" />删除选中
         </div>
       </el-button>
 
@@ -42,10 +57,12 @@
       :show-save="false"
       :show-close="false"
     >
-      <file-uploader />
+      <file-uploader
+        :folder-id="folderId"
+        @success="refresh"
+      />
 
     </keen-dialog>
-
   </div>
 </template>
 <script>
@@ -54,6 +71,16 @@ export default {
   name: 'AttachmentHeader',
   components: {
     FileUploader
+  },
+  props: {
+    folderId: {
+      type: Number,
+      default: 0
+    },
+    isSelected: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -81,22 +108,18 @@ export default {
       this.dialog = true
     },
     addFolder() {
-      console.log('aa')
       this.$emit('addFolder')
-    },
-    save() {
-      this.$refs.add.save()
     },
     search() {
       this.$emit('search', this.params)
     },
-    refreshTable() {
+    refresh() {
       this.$emit('search')
+      this.$emit('refreshSummary')
     },
     deleteSelected() {
       this.$emit('deleteSelected')
     }
-
   }
 }
 </script>

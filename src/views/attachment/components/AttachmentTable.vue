@@ -24,19 +24,19 @@
               height="24"
               width="24"
               class="me-2"
-              src="@/assets/media/svg/attachment/folder.svg"
+              :src="scope.row.thumbnail"
             >
             <div
-              v-if="scope.row.create"
+              v-if="scope.row.create || scope.row.editable"
               class="d-flex"
             >
-              <el-input v-model="scope.row.folderName" />
+              <el-input v-model="scope.row.name" />
               <el-button
                 type="primary"
                 plain
                 size="small"
                 class="ms-3"
-                @click="comfirmAddFolder"
+                @click="confirmAddOrUpdate(scope.row)"
               >
                 <i class="bi bi-check fs-4" />
               </el-button>
@@ -45,13 +45,17 @@
                 plain
                 size="small"
                 class="ms-3"
-                @click="cancelAddFolder"
+                @click="cancelAddOrUpdate(scope.row)"
               >
                 <i class="bi bi-x fs-4" />
               </el-button>
             </div>
-            <div v-else>
-              {{ scope.row.folderName }}
+            <div
+              v-else
+              class="pointer"
+              @click="navigateToNext(scope.row)"
+            >
+              {{ scope.row.name }}
             </div>
 
           </div>
@@ -65,14 +69,33 @@
         min-width="120"
         show-overflow-tooltip
       />
+
       <el-table-column
-        prop="orderNum"
-        label="排序"
-        width="100"
-        :align="center"
-        sortable
+        prop="size"
+        label="大小"
+        align="center"
+        width="120"
         show-overflow-tooltip
       />
+      <el-table-column
+        label="排序"
+        width="160"
+        align="center"
+        sortable
+        show-overflow-tooltip
+      >
+        <template slot-scope="scope">
+          <div
+            v-if="scope.row.folder && (scope.row.create || scope.row.editable)"
+            class="d-flex"
+          >
+            <el-input-number v-model="scope.row.orderNum" />
+          </div>
+          <div v-else>
+            {{ scope.row.orderNum }}
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="createTime"
         label="创建时间"
@@ -97,7 +120,7 @@
             <a
               slot="before"
               class="btn btn-icon btn-active-light-primary w-30px h-30px me-2"
-              @click="detail"
+              @click="copyLink(row)"
             >
               <span class="svg-icon svg-icon-2"><svg
                 width="24"
@@ -121,7 +144,7 @@
             <a
               slot="before"
               class="btn btn-icon btn-active-light-primary w-30px h-30px me-2"
-              @click="detail"
+              @click="download(row)"
             >
               <span class="svg-icon svg-icon-2 transform-90 "><svg
                 width="24"
@@ -190,10 +213,12 @@
                 </span>
               </a>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item :command="'detail_' + row.id"> <i class="fs-5 bi bi-eye-fill" />
-                  移动文件</el-dropdown-item>
-                <el-dropdown-item :command="'configItem_' + row.id"><i class="fs-5 bi bi-grid" />
+                <el-dropdown-item :command="'move_' + row.id + '_' + row.folder"> <i class="fs-5 bi bi-arrow-return-left" />
+                  移动</el-dropdown-item>
+                <el-dropdown-item :command="'delete_' + row.id + '_' + row.folder"><i class="fs-5 bi bi-trash-fill" />
                   删除文件</el-dropdown-item>
+                <el-dropdown-item :command="'rename_' + row.id + '_' + row.folder"><i class="fs-5 bi bi-shuffle" />
+                  重命名</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </table-button-group>
@@ -211,24 +236,30 @@
   </div>
 </template>
 <script>
-import { getLoginLog, deleteLoginLog } from '@/api/monitor/loginLog'
-import { fetchPageFolders, addOrUpdateFolder } from '@/api/attachment/attachment'
+import { fetchPageAttachmentFolderAndInfo, addOrUpdateAttachmentFolder, addOrUpdateAttachmentInfo, deleteAttachment, deleteAttachmentFolder } from '@/api/attachment/attachment'
+import { downloadAttachment } from '@/api/attachment/attachment'
+import { getThumbnail } from '@/const/attachmentConst'
 export default {
   name: 'AttachmentTable',
+  props: {
+    isSelected: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       list: [],
       total: 0,
       loading: false,
       params: {
+        parentId: 0,
         foldName: '',
         pageNum: 1,
         pageSize: 10,
         orderBy: '',
         orderType: ''
       },
-      dataInfo: {},
-      infoDialog: false,
       multipleSelection: []
     }
   },
@@ -239,19 +270,24 @@ export default {
     refreshTable(params) {
       this.loading = true
       if (params) {
-        this.params.nickname = params.nickname
+        this.params.name = params.name
         this.params.pageNum = params.pageNum
       }
       this.spinShow = true
-      fetchPageFolders(this.params).then(res => {
-        this.list = res.data.list
-        this.total = res.data.total
-        this.spinShow = false
-        this.loading = false
-      }).catch(e => {
-        this.spinShow = false
-        this.loading = false
-      })
+      fetchPageAttachmentFolderAndInfo(this.params)
+        .then(res => {
+          const { list, total } = res.data
+          list.forEach(item => {
+            item.thumbnail = getThumbnail(item.suffix)
+          })
+          this.list = list
+          this.total = total
+          this.spinShow = false
+          this.loading = false
+        }).catch(e => {
+          this.spinShow = false
+          this.loading = false
+        })
     },
     handleCurrentChange(pageNum) {
       this.params.pageNum = pageNum
@@ -262,6 +298,7 @@ export default {
       this.refreshTable()
     },
     handleSelectionChange(val) {
+      this.$emit('update:isSelected', val.length !== 0)
       this.multipleSelection = val
     },
     sortTable(params) {
@@ -269,35 +306,75 @@ export default {
       this.params.orderType = params.order
       this.refreshTable()
     },
+    navigateToNext(row) {
+      if (row.folder) {
+        this.changeFolder(row)
+        this.$emit('navigateNext', row)
+      }
+    },
     addFolder() {
       this.list.unshift({
-        folderName: '',
+        name: '',
         create: true,
-        orderNum: 10
+        orderNum: 0,
+        folder: true,
+        thumbnail: getThumbnail('dir'),
+        parentId: this.params.parentId
       })
     },
-    comfirmAddFolder() {
-      addOrUpdateFolder(this.list[0])
-        .then(res => {
-          this.refreshTable()
-        })
+    changeFolder(row) {
+      this.params.parentId = row.id
+      this.params.name = ''
+      this.refreshTable()
     },
-    openDetail(row) {
-      getLoginLog({
-        id: row.id
-      }).then(res => {
-        this.dataInfo = res.data
-        this.infoDialog = true
+    confirmAddOrUpdate(row) {
+      const callback = res => {
+        this.refreshTable()
+      }
+      if (row.folder) {
+        addOrUpdateAttachmentFolder(row)
+          .then(callback)
+      } else {
+        addOrUpdateAttachmentInfo(row)
+          .then(callback)
+      }
+    },
+    cancelAddOrUpdate(row) {
+      if (row.create) {
+        this.list.shift()
+      } else {
+        row.editable = false
+      }
+    },
+    copyLink(row) {
+    },
+    handleCommand(command) {
+      const [name, id, isFolder] = command.split('_')
+      if (name === 'move') {
+        this.moveAttachment()
+      } else if (name === 'delete') {
+        this.deleteOne({ id: id, folder: isFolder === 'true' })
+      } else {
+        this.rename(Number(id), isFolder === 'true')
+      }
+    },
+    moveAttachment(id, isFolder) {
+
+    },
+    rename(id, isFolder) {
+      this.list.forEach(item => {
+        if (item.id === id && item.folder === isFolder) {
+          item.editable = true
+          return
+        }
       })
     },
-    deleteOne(row) {
-      this.$confirm('确定要删除该日志?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.handleDelete([row.id])
-      })
+    download(row) {
+      if (!row.folder) {
+        downloadAttachment(row.id)
+          .then(res => {
+          })
+      }
     },
     deleteSelected() {
       if (this.multipleSelection.length > 0) {
@@ -306,34 +383,49 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.handleDelete(this.multipleSelection.map(item => item.id))
+          this.handleDelete(this.multipleSelection)
         })
       } else {
         this.$message('至少选中一条记录')
       }
     },
-
-    handleDelete(ids) {
-      deleteLoginLog({
-        ids: ids
-      }).then(res => {
-        this.refreshTable()
-        this.$message.success('删除成功')
+    deleteOne(row) {
+      const tipMessage = row.folder ? '确认删除该文件夹同时删除文件夹下的所有文件?' : '确认删除该文件?'
+      this.$confirm(tipMessage, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.handleDelete([row])
       })
     },
-    cancel() {
-      this.infoModal = false
+    async handleDelete(rows) {
+      const folderIds = rows.filter(item => item.folder).map(item => item.id)
+      const attachmentIds = rows.filter(item => !item.folder).map(item => item.id)
+      if (folderIds.length > 0) {
+        await deleteAttachmentFolder({
+          ids: folderIds
+        })
+      }
+      if (attachmentIds.length > 0) {
+        await deleteAttachment({
+          ids: attachmentIds
+        })
+      }
+      this.refreshTable()
+      this.$emit('refreshSummary')
+      this.$message.success('删除成功')
     }
   }
 }
 </script>
 <style lang="scss" scoped>
-
 ::v-deep .el-input {
 
     .el-input__inner {
         background-color: transparent !important;
-        border-color: var(--bs-gray-300) !important
+        border-color: var(--bs-gray-300) !important;
+        min-height: 36px !important;
     }
 }
 </style>

@@ -22,28 +22,49 @@
             />
           </svg>
         </span>
-        <a href="#">Keen</a>
-        <i class="bi bi-chevron-right fs-5 text-primary mx-1" />                    <a href="#">themes</a>
-        <i class="bi bi-chevron-right fs-5 text-primary mx-1" />                    <a href="#">html</a>
-        <i class="bi bi-chevron-right fs-5 text-primary mx-1" />                    demo1
+        <a
+          class="pointer"
+          @click="changeFolder({id: 0})"
+        >Keen</a>
+        <template v-for="(item, index) in itemList">
+          <i
+            :key="index"
+            class="bi bi-chevron-right fs-5 text-primary mx-1"
+          />
+          <a
+            :key="index"
+            class="pointer"
+            @click="changeFolder(item)"
+          >{{ item.name }}</a>
+        </template>
       </div>
     </div>
-    <!--end::Folder path-->
 
-    <!--begin::Folder Stats-->
-    <div class="badge badge-lg badge-primary">
-      <span id="kt_file_manager_items_counter">82 items</span>
-    </div>
-    <!--end::Folder Stats-->
   </div>
 </template>
 <script>
 export default {
   name: 'AttachmentNavigationBar',
   data() {
-    return {}
+    return {
+      itemList: []
+    }
   },
-  methods: {}
+  methods: {
+    addNavigationItem(row) {
+      this.itemList.push(row)
+    },
+    changeFolder(row) {
+      this.$emit('changeFolder', row)
+      if (!row.id) {
+        this.itemList = []
+      }
+      const idx = this.itemList.findIndex(item => item.id === row.id)
+      if (idx !== -1) {
+        this.itemList.splice(idx + 1)
+      }
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

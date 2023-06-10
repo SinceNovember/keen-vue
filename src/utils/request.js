@@ -32,7 +32,6 @@ Instance.interceptors.request.use(config => {
 
 Instance.interceptors.response.use(res => {
   // const res = response.data
-  console.log(res)
   if (res.data.code && res.data.code !== 200) {
     Message({
       message: res.data.msg || 'Error',

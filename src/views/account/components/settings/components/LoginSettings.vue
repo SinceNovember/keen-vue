@@ -223,8 +223,6 @@ export default {
         this.$message.warning('新密码与确认密码不同')
         return
       }
-      console.log(password)
-      console.log(newPassword)
       updatePassword({
         password: password,
         newPassword: newPassword

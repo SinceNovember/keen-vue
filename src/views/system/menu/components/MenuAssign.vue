@@ -100,7 +100,6 @@ export default {
   },
   watch: {
     filterText(val) {
-      console.log(val)
       if (val) {
         this.roleList = this.roleList.filter(item => {
           return item.label.indexOf(val) !== -1

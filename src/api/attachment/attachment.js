@@ -47,18 +47,50 @@ export const downloadBlob = res => {
   link.click()
 }
 
-export const fetchPageFolders = data => {
+export const deleteAttachment = data => {
   return $instance({
-    url: '/api/attachment/folder',
+    url: '/api/attachment/delete',
+    method: 'post',
+    data
+  })
+}
+
+export const getAttachmentInfoSummary = () => {
+  return $instance({
+    url: '/api/attachment/info/summary',
+    method: 'get'
+  })
+}
+
+export const addOrUpdateAttachmentInfo = data => {
+  return $instance({
+    url: '/api/attachment/info',
+    method: 'post',
+    data
+  })
+}
+
+export const fetchPageAttachmentFolderAndInfo = data => {
+  return $instance({
+    url: '/api/attachment/info/page',
     method: 'get',
     data
   })
 }
 
-export const addOrUpdateFolder = data => {
+export const addOrUpdateAttachmentFolder = data => {
   return $instance({
     url: '/api/attachment/folder',
     method: 'post',
     data
   })
 }
+
+export const deleteAttachmentFolder = data => {
+  return $instance({
+    url: '/api/attachment/folder/delete',
+    method: 'post',
+    data
+  })
+}
+
