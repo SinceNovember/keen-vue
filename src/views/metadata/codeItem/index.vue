@@ -30,7 +30,7 @@ export default {
   },
   props: {
     codeId: {
-      type: Number,
+      type: [String, Number],
       default: null
     },
     itemList: {

@@ -93,7 +93,7 @@
           <span
             v-for="(item, index) in userInfo.roleNames"
             :key="index"
-            class="badge badge-light-success "
+            class="badge badge-light-success me-2"
           >
             {{ item }}
           </span>

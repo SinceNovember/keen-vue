@@ -7,6 +7,7 @@
       tooltip-effect="dark"
       style="width: 100%"
       element-loading-text="Loading..."
+      @sort-change="sortTable"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -74,7 +75,6 @@
             :row="row"
             :show-edit="false"
             @detail="openDetail"
-            @edit="openEdit"
             @delete="deleteOne"
           />
         </template>
@@ -84,6 +84,7 @@
       <el-pagination
         layout="total,sizes, prev, pager, next"
         :total="total"
+        :current-page="params.pageNum"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -131,8 +132,7 @@ export default {
     refreshTable(params) {
       this.loading = true
       if (params) {
-        this.params.nickname = params.nickname
-        this.params.pageNum = params.pageNum
+        this.params = { ...this.params, ...params, pageNum: 1 }
       }
       this.spinShow = true
       fetchPageOperateLogs(this.params).then(res => {
@@ -157,7 +157,7 @@ export default {
       this.multipleSelection = val
     },
     sortTable(params) {
-      this.params.orderBy = params.key
+      this.params.orderBy = params.prop
       this.params.orderType = params.order
       this.refreshTable()
     },

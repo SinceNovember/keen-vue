@@ -90,7 +90,7 @@
                   </div>
 
                   <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-10">
-                    <el-checkbox v-model="checked">Remember me</el-checkbox>
+                    <el-checkbox v-model="loginForm.rememberMe">Remember me</el-checkbox>
                     <div />
 
                     <a

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-stack mt-10 mb-2">
+  <div class="d-flex flex-stack my-2">
     <!--begin::Folder path-->
     <div class="badge badge-lg badge-light-primary">
       <div class="d-flex align-items-center flex-wrap">

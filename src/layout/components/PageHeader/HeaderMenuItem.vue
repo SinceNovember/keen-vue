@@ -93,9 +93,6 @@ export default {
     },
     menuSubCls(route) {
       return !route.parentId ? 'show fixed-show' : 'show abs-show'
-    },
-    updateRouteHover(type) {
-      this.$emit('updateRouteHover', type)
     }
   }
 }
@@ -103,16 +100,12 @@ export default {
 <style lang="scss" scoped>
 .fixed-show {
     position: fixed;
-    /* transform: translate(0px, 108px); */
-    /* transform: translate3d(0px, 108px, 0px); */
+
     top: 70px;
 }
 
 .abs-show {
     position: absolute;
     transform: translate(180px, -35px);
-    /* transform: translate3d(186px, -20px, 0px); */
-    /* left: 100%;
-    top: 10px;  */
 }
 </style>

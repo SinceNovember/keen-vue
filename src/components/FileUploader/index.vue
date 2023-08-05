@@ -101,10 +101,11 @@ export default {
       this.uploadFile(data.file, fileList)
     },
     handlePreview(file) {
-      console.log(file)
+    },
+    onSuccess() {
+
     },
     beforeUpload(file) {
-      console.log(file)
       const extension = file.name.split('.').pop()
       this.fileList.push({
         name: file.name,

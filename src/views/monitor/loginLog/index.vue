@@ -11,7 +11,6 @@
         </div>
         <login-log-table
           ref="table"
-          @openEdit="openEdit"
         />
       </el-card>
     </div>

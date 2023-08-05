@@ -7,6 +7,7 @@
       tooltip-effect="dark"
       style="width: 100%"
       element-loading-text="Loading..."
+      @sort-change="sortTable"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -63,16 +64,17 @@
       <el-pagination
         layout="total,sizes, prev, pager, next"
         :total="total"
+        :current-page="params.pageNum"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
     </div>
 
     <keen-dialog
-      :visible="infoDialog"
+      :visible.sync="infoDialog"
       title="代码项详情"
       :show-save="false"
-      :append-body="true"
+      :append-body="false"
       @cancel="infoDialog = false"
     >
       <code-item-info :data-info="dataInfo" />
@@ -89,7 +91,7 @@ export default {
   },
   props: {
     codeId: {
-      type: Number,
+      type: [String, Number],
       default: null
     }
   },
@@ -118,8 +120,7 @@ export default {
     refreshTable(params) {
       this.loading = true
       if (params) {
-        this.params.itemText = params.itemText
-        this.params.pageNum = params.pageNum
+        this.params = { ...this.params, ...params, pageNum: 1 }
       }
       this.spinShow = true
       fetchPageCodeItems(this.params).then(res => {
@@ -144,7 +145,7 @@ export default {
       this.multipleSelection = val
     },
     sortTable(params) {
-      this.params.orderBy = params.key
+      this.params.orderBy = params.prop
       this.params.orderType = params.order
       this.refreshTable()
     },

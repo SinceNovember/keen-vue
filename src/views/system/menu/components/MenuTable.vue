@@ -9,6 +9,7 @@
       row-key="id"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       element-loading-text="Loading..."
+      @sort-change="sortTable"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -170,6 +171,7 @@
       <el-pagination
         layout="total,sizes, prev, pager, next"
         :total="total"
+        :current-page="params.pageNum"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -237,8 +239,7 @@ export default {
     refreshTable(params) {
       this.loading = true
       if (params) {
-        this.params.title = params.title
-        this.params.pageNum = params.pageNum
+        this.params = { ...this.params, ...params, pageNum: 1 }
       }
       this.spinShow = true
       fetchPageMenus(this.params).then(res => {
@@ -263,7 +264,7 @@ export default {
       this.multipleSelection = val
     },
     sortTable(params) {
-      this.params.orderBy = params.key
+      this.params.orderBy = params.prop
       this.params.orderType = params.order
       this.refreshTable()
     },
@@ -360,4 +361,6 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+</style>

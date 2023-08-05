@@ -167,7 +167,6 @@
             </div>
             <el-button
               type="primary"
-              @click="save"
             >开 启 </el-button>
           </div>
         </div>

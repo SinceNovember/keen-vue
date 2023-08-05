@@ -45,6 +45,13 @@ var sender = {
     })
   },
   single: (toId, content, type) => {
+    var json = {
+      toId: toId,
+      content: content,
+      type: 'SINGLE',
+      contentType: type
+    }
+    console.log(json)
     webSocketSend({
       toId: toId,
       content: content,

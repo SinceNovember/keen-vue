@@ -6,47 +6,55 @@
         style="width: 200px;"
         small
         prefix-icon="el-icon-search"
-        placeholder="请输入用户名称"
+        placeholder="请输入用户昵称"
         @change="search"
       />
-
-      <a
-        href="#"
-        class="btn btn-sm btn-icon btn-color-primary btn-light btn-active-light-primary"
+      <keen-search-form
+        @search="search"
+        @reset="resetForm"
       >
-        <span class="svg-icon svg-icon-3 m-0">
-          <svg
-            width="16"
-            height="15"
-            viewBox="0 0 16 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              y="6"
-              width="16"
-              height="3"
-              rx="1.5"
-              fill="currentColor"
-            />
-            <rect
-              opacity="0.3"
-              y="12"
-              width="8"
-              height="3"
-              rx="1.5"
-              fill="currentColor"
-            />
-            <rect
-              opacity="0.3"
-              width="12"
-              height="3"
-              rx="1.5"
-              fill="currentColor"
-            />
-          </svg>
-        </span>
-      </a>
+        <el-row>
+          <el-col>
+            <el-form-item
+              label="用户名"
+            >
+              <el-input
+                v-model="params.username"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <el-form-item label="部门">
+              <tree-select
+                :value="params.deptId"
+                :options="treeModelData"
+                class="w-100"
+                @getValue="getValue($event)"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <el-form-item label="状态">
+              <el-select
+                v-model="params.status"
+                class="w-100"
+                placeholder="请选择状态"
+              >
+                <el-option
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </keen-search-form>
     </div>
 
     <header-button-group
@@ -72,23 +80,60 @@
   </div>
 </template>
 <script>
+import { fetchDeptTreeModel } from '@/api/system/dept'
+import { getStatusOption } from '@/api/option'
 import UserAdd from './UserAdd'
+import TreeSelect from '@/components/TreeSelect'
+
 export default {
   name: 'UserHeader',
   components: {
-    UserAdd
+    UserAdd,
+    TreeSelect
   },
   data() {
     return {
       dialog: false,
       params: {
         nickname: '',
-        pageNum: 1
+        username: '',
+        deptId: '',
+        status: ''
       },
-      userInfo: {}
+      userInfo: {},
+      treeModelData: [],
+      statusOptions: [
+        {
+          value: 'VALID',
+          label: '启用'
+        },
+        {
+          value: 'LOCK',
+          label: '禁用'
+        }
+      ]
     }
   },
+  mounted() {
+    this.loadTreeModel()
+    this.loadStatusOptionModel()
+  },
   methods: {
+    loadTreeModel() {
+      fetchDeptTreeModel().then(res => {
+        this.treeModelData = res.data
+      })
+    },
+    loadStatusOptionModel() {
+      getStatusOption().then(res => {
+        if (res.data) {
+          this.statusOptions = res.data
+        }
+      })
+    },
+    getValue(value) {
+      this.params.deptId = value
+    },
     openAdd() {
       this.dialog = true
       this.userInfo = {
@@ -110,6 +155,13 @@ export default {
     },
     deleteSelected() {
       this.$emit('deleteSelected')
+    },
+    resetForm() {
+      this.params.username = ''
+      this.params.nickname = ''
+      this.params.deptId = ''
+      this.params.status = ''
+      this.search()
     },
     cancel() {
       this.dialog = false

@@ -15,7 +15,6 @@
       tooltip-effect="dark"
       style="width: 100%"
       element-loading-text="Loading..."
-      @selection-change="handleSelectionChange"
     >
       <el-table-column
         prop="title"
@@ -137,7 +136,7 @@ export default {
       this.refreshTable()
     },
     sortTable(params) {
-      this.params.orderBy = params.key
+      this.params.orderBy = params.prop
       this.params.orderType = params.order
       this.refreshTable()
     },

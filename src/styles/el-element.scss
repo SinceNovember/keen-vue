@@ -527,10 +527,14 @@
 }
 
 .el-popover {
-    color: var(--bs-text-gray-700);
+    color: var(--bs-text-gray-600);
     background-color: var(--bs-dropdown-bg);
     border-color: var(--bs-dropdown-bg);
     box-shadow: var(--bs-dropdown-box-shadow);
+
+    .el-popover__title {
+        color: var(--bs-text-gray-700);
+    }
 
 }
 
@@ -651,6 +655,12 @@
         .el-form-item__label {
             color: var(--bs-text-gray-600);
         }
+    }
+}
+
+.el-form--label-top {
+    .el-form-item__label {
+        padding: 0px;
     }
 }
 

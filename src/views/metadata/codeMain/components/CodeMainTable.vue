@@ -7,6 +7,7 @@
       tooltip-effect="dark"
       style="width: 100%"
       element-loading-text="Loading..."
+      @sort-change="sortTable"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -47,7 +48,6 @@
           <table-button-group
             :row="row"
             :show-detail="false"
-            @detail="openDetail"
             @edit="openEdit"
             @delete="deleteOne"
           >
@@ -106,6 +106,7 @@
       <el-pagination
         layout="total,sizes, prev, pager, next"
         :total="total"
+        :current-page="params.pageNum"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -132,7 +133,6 @@
         v-if="configItemDialog"
         ref="configItem"
         :code-id="codeId"
-        @cancel="cancelConfig"
       />
     </keen-dialog>
   </div>
@@ -159,7 +159,7 @@ export default {
         orderBy: '',
         orderType: ''
       },
-      codeId: 0,
+      codeId: '',
       dataInfo: {},
       infoDialog: false,
       configItemDialog: false,
@@ -173,8 +173,7 @@ export default {
     refreshTable(params) {
       this.loading = true
       if (params) {
-        this.params.codeName = params.codeName
-        this.params.pageNum = params.pageNum
+        this.params = { ...this.params, ...params, pageNum: 1 }
       }
       this.spinShow = true
       fetchPageCodeMains(this.params).then(res => {
@@ -199,7 +198,7 @@ export default {
       this.multipleSelection = val
     },
     sortTable(params) {
-      this.params.orderBy = params.key
+      this.params.orderBy = params.prop
       this.params.orderType = params.order
       this.refreshTable()
     },

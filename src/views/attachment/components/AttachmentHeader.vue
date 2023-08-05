@@ -1,5 +1,5 @@
 <template>
-  <div class="progress-vertical">
+  <div class="progress-vertical mb-6">
     <div class="progress-vertical gap-2">
       <el-input
         v-model="params.name"
@@ -11,11 +11,6 @@
       />
     </div>
     <div class="d-flex">
-      <!-- <header-button-group
-            @refresh="refreshTable"
-            @add="openAdd"
-            @delete="deleteSelected"
-        /> -->
       <el-button
         type="primary"
         plain

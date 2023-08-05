@@ -37,7 +37,7 @@
         <div class="notice d-flex flex-column bgi-no-repeat rounded-top">
           <!--begin::Title-->
           <h3 class="notice-header text-white fw-semibold">
-            Notifications <span class="fs-8 opacity-75 ps-3">{{ total }} reports</span>
+            系 统 通 知 <span class="fs-8 opacity-75 ps-3">{{ total }} reports</span>
           </h3>
 
           <div class="scroll-y mh-325px my-5 px-8">
@@ -204,7 +204,7 @@
               class="btn btn-color-gray-600 btn-active-color-primary"
               @click="openMore"
             >
-              View All
+              查 看 全 部
               <span class="svg-icon svg-icon-5">
                 <svg
                   width="24"
@@ -288,6 +288,7 @@ export default {
 <style lang="scss" scoped>
 .notice {
     width: 400px;
+    margin: -6px;
 
     .notice-header {
         display: flex;

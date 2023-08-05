@@ -65,7 +65,6 @@ export default {
       this.$refs.table.refreshTable(params)
     },
     refreshSummary() {
-      console.log('zzz')
       this.$refs.summary.loadAttachmentInfoSummary()
     },
     deleteSelected() {

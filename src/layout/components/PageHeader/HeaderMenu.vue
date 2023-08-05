@@ -7,7 +7,6 @@
         v-for="(route, index) in menus"
         :key="index"
         :route="route"
-        @updateRouteHover="updateRouteHover"
       />
     </div>
   </div>

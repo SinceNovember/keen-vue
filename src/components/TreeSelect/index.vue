@@ -44,8 +44,8 @@ export default {
     },
     /* 初始值 */
     value: {
-      type: Number,
-      default: () => { return null }
+      type: [Number, String],
+      default: () => { return '' }
     },
     /* 可清空选项 */
     clearable: {

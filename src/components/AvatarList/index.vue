@@ -21,8 +21,7 @@
       v-if="list.length > max"
       href="#"
       class="symbol symbol-35px symbol-circle"
-      data-bs-toggle="modal"
-      data-bs-target="#kt_modal_view_users"
+      @click="showAll"
     >
       <span class="symbol-label bg-light text-gray-400 fs-8 fw-bold">+{{ list.length - max }}</span>
     </a>
@@ -58,7 +57,9 @@ export default {
     }
   },
   methods: {
-
+    showAll() {
+      this.$emit('showAll', this.list)
+    }
   }
 }
 </script>

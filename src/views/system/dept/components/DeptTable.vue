@@ -9,6 +9,7 @@
       row-key="id"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       element-loading-text="Loading..."
+      @sort-change="sortTable"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -31,7 +32,10 @@
         show-overflow-tooltip
       >
         <template slot-scope="{row}">
-          <avatar-list :list="row.users" />
+          <avatar-list
+            :list="row.users"
+            @showAll="showAllUser"
+          />
         </template>
 
       </el-table-column>
@@ -68,6 +72,7 @@
       <el-pagination
         layout="total,sizes, prev, pager, next"
         :total="total"
+        :current-page="params.pageNum"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -81,17 +86,29 @@
     >
       <dept-info :data-info="dataInfo" />
     </keen-dialog>
+
+    <keen-dialog
+      :visible.sync="userDialog"
+      title="部门用户列表"
+      :width="300"
+      :show-save="false"
+      :show-close="false"
+    >
+      <dept-user-list :users="users" />
+    </keen-dialog>
   </div>
 </template>
 <script>
 import { fetchPageDepts, getDept, deleteDept } from '@/api/system/dept'
 import DeptInfo from './DeptInfo.vue'
+import DeptUserList from './DeptUserList.vue'
 import AvatarList from '@/components/AvatarList'
 export default {
   name: 'DeptTable',
   components: {
     DeptInfo,
-    AvatarList
+    AvatarList,
+    DeptUserList
   },
   data() {
     return {
@@ -106,7 +123,9 @@ export default {
         orderType: ''
       },
       dataInfo: {},
+      users: [],
       infoDialog: false,
+      userDialog: false,
       multipleSelection: []
     }
   },
@@ -117,8 +136,7 @@ export default {
     refreshTable(params) {
       this.loading = true
       if (params) {
-        this.params.deptName = params.deptName
-        this.params.pageNum = params.pageNum
+        this.params = { ...this.params, ...params, pageNum: 1 }
       }
       this.spinShow = true
       fetchPageDepts(this.params).then(res => {
@@ -143,7 +161,7 @@ export default {
       this.multipleSelection = val
     },
     sortTable(params) {
-      this.params.orderBy = params.key
+      this.params.orderBy = params.prop
       this.params.orderType = params.order
       this.refreshTable()
     },
@@ -195,6 +213,11 @@ export default {
     },
     cancel() {
       this.infoModal = false
+    },
+    showAllUser(users) {
+      console.log('zzzz')
+      this.users = users
+      this.userDialog = true
     }
   }
 }
