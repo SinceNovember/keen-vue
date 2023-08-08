@@ -31,6 +31,7 @@ Instance.interceptors.request.use(config => {
 )
 
 Instance.interceptors.response.use(res => {
+  console.log(res)
   // const res = response.data
   if (res.data.code && res.data.code !== 200) {
     Message({
@@ -53,8 +54,11 @@ Instance.interceptors.response.use(res => {
     }
     return Promise.reject(new Error(res.data.msg || 'Error'))
   } else {
+    console.log(res.data)
     // 是否是下载
     if (res.headers['content-disposition']) {
+      console.log('aaa')
+
       const disposition = res.headers['content-disposition']
       const fileName = disposition.substring(
         disposition.indexOf('filename=') + 9,

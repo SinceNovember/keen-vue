@@ -58,16 +58,18 @@
       </span>
       <span class="menu-title">{{ route.meta.title }}</span>
     </router-link>
-    <div
-      v-if="hasChild(route.children)"
-      class="menu-sub menu-sub-accordion"
-    >
-      <sidebar-menu-item
-        v-for="(subMenu, index) in route.children"
-        :key="index"
-        :route="subMenu"
-      />
-    </div>
+    <transition name="slide">
+      <div
+        v-if="hasChild(route.children)"
+        class="menu-sub menu-sub-accordion"
+      >
+        <sidebar-menu-item
+          v-for="(subMenu, index) in route.children"
+          :key="index"
+          :route="subMenu"
+        />
+      </div>
+    </transition>
   </div>
 </template>
 <script>
